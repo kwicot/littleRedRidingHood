@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using SO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,13 +12,15 @@ public class Chest : MonoBehaviour
     public GameManager gameManager;
     private Inventory inventory;
     public GameObject Kod;
-    private Item Item;
+    private ItemController itemController;
+
+    public SOItem QuestItem;
 
     void Start()
     {
         gameManager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameManager>();
         inventory = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Inventory>();
-        Item = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Item>();
+        itemController = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<ItemController>();
     }
     public void NumberCod1()
     {
@@ -28,6 +31,7 @@ public class Chest : MonoBehaviour
         }
         Text1.text = "" + number1;
         gameManager.Sounds.PlayOneShot(gameManager.SoundsGame[2]);
+        CheckCode();
     }
     public void NumberCod2()
     {
@@ -38,7 +42,7 @@ public class Chest : MonoBehaviour
         }
         Text2.text = "" + number2;
         gameManager.Sounds.PlayOneShot(gameManager.SoundsGame[2]);
-
+        CheckCode();
     }
     public void NumberCod3()
     {
@@ -49,7 +53,7 @@ public class Chest : MonoBehaviour
         }
         Text3.text = "" + number3;
         gameManager.Sounds.PlayOneShot(gameManager.SoundsGame[2]);
-
+        CheckCode();
     }
     public void NumberCod4()
     {
@@ -60,30 +64,21 @@ public class Chest : MonoBehaviour
         }
         Text4.text = "" + number4;
         gameManager.Sounds.PlayOneShot(gameManager.SoundsGame[2]);
+        CheckCode();
 
     }
 
-    void Update()
+    void CheckCode()
     {
         if(number1 == 7 && number2 == 1 && number3 == 6 && number4 == 3)
         {
-            if(inventory.idActive == 14)
-            {
-                Kod = GameObject.FindGameObjectWithTag("IconItem");
-                Destroy(Kod);
-                Destroy(Item.choiceItemSlot);
-                inventory.idActive = 0;
-                inventory.mailIsFull = false;
-            }
-            else if(inventory.idActive != 14)
-            {
-                Kod = GameObject.FindGameObjectWithTag("Kod");
-                Destroy(Kod);
-            }
             Openchest.SetActive(true);
+            inventory.RemoveItem("PaperCode");
+            inventory.RemoveItem("Paper");
+            if(Kod != null) Destroy(Kod);
             gameManager.Sounds.PlayOneShot(gameManager.SoundsGame[1]);
             number1 = 8;
-            PlayerPrefs.SetInt("ChestLivinRoom", 1);
+            PlayerPrefs.SetInt("Room", 1);
         }
     }
 }

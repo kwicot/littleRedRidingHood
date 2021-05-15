@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GoogleMobileAds.Api;
+using SO;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public SOItemsHolder Holder;
+    
+    
+    
+    
+    
+    
     public MenuScr menuScr;
     public bool DelAll;
     public AudioSource Sounds;
@@ -26,7 +34,7 @@ public class GameManager : MonoBehaviour
     public GameObject Glade;
 
     private Inventory inventory;
-    private Item Item;
+    private ItemController itemController;
     //Living Room
     public GameObject ClosedEmail;
     public GameObject OpenEmail;
@@ -106,7 +114,7 @@ public class GameManager : MonoBehaviour
     public int RightBook;
     private bool isOpenDoor = false;
     private bool isOpenDoorStreet = false;
-    public bool isCraft = false;
+    public bool CraftMode = false;
     public GameObject DownCraftBttn;
     public RedBook redBook;
     public int MiniGameActive;
@@ -129,7 +137,7 @@ public class GameManager : MonoBehaviour
             menuScr.RussiaVersion();
         }
         inventory = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Inventory>();
-        Item = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Item>();
+        itemController = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<ItemController>();
         if (PlayerPrefs.GetInt("FIRSTTIMEOPENING", 1) == 1)
         {
             PrivacyPolice.SetActive(true);
@@ -172,8 +180,16 @@ public class GameManager : MonoBehaviour
     }
     public void CraftBttn()
     {
-        if (isCraft) { isCraft = false; DownCraftBttn.SetActive(false); }
-        else { isCraft = true; DownCraftBttn.SetActive(true); }
+        if (inventory.CraftMode)
+        {
+            inventory.CraftMode = false; 
+            DownCraftBttn.SetActive(false);
+        }
+        else
+        {
+            inventory.CraftMode = true;
+            DownCraftBttn.SetActive(true);
+        }
         Sounds.PlayOneShot(SoundsGame[43]);
     }
     public void ClickOpenEmail(AudioClip Open)
@@ -190,15 +206,18 @@ public class GameManager : MonoBehaviour
     }
     public void InventoryPanel()
     {
+        Image img = inventoryBttn1.transform.GetChild(0).GetComponent<Image>();
         if (Inventory.activeSelf == false)
         {
             Inventory.SetActive(true);
             inventoryBttn1.transform.position = new Vector2(inventoryBttn1.transform.position.x - 100, inventoryBttn1.transform.position.y);
+            
         }
         else
         {
             Inventory.SetActive(false);
             inventoryBttn1.transform.position = new Vector2(inventoryBttn1.transform.position.x + 100, inventoryBttn1.transform.position.y);
+            
         }
     }
     public void UIManager(GameObject Panel)
@@ -227,7 +246,8 @@ public class GameManager : MonoBehaviour
 
     public void FeedClik()
     {
-        if (inventory.idActive == 1)
+        Debug.Log("FeedClick");
+        if (inventory.CheckHandItemName("Seed"))/////////////////////////////////////// 
         {
             ClearInventory();
             Feed.SetActive(false);
@@ -238,12 +258,13 @@ public class GameManager : MonoBehaviour
 
     public void OpenDoor()
     {
+        Debug.Log("OpenDoor");
         var number = PlayerPrefs.GetInt("DoorOpenBR");
         if (number == 1)
         {
             isOpenDoor = true;
         }
-        if (inventory.idActive == 3)
+        if (inventory.CheckHandItemName("DoorHandle"))/////////////////////////////////////// 
         {
             ClearInventory();
             LivingRoom.SetActive(false);
@@ -272,7 +293,7 @@ public class GameManager : MonoBehaviour
 
     public void ClickGramophone()
     {
-        if (inventory.idActive == 19)
+        if (inventory.CheckHandItemName("Gramophone"))/////////////////////////////////////// 
         {
             ClearInventory();
             Gramophone[0].SetActive(true);
@@ -301,16 +322,16 @@ public class GameManager : MonoBehaviour
     }
     public void ClickCandle()
     {
-        if (inventory.idActive == 13)
+        if (inventory.CheckHandItemName("Paper")) /////////////////////////////////////// 
         {
             ClearInventory();
             Paper.SetActive(true);
-            NewItemInventory(PaperCod);
+            NewItemInventory("PaperCode");
         }
     }
     public void ZoomPianoOpenClose()
     {
-        if (inventory.idActive == 2 && ZoomPiano.activeSelf == false) 
+        if (inventory.CheckHandItemName("Book") && ZoomPiano.activeSelf == false) ///////////////
         {
             ClearInventory();
             Notes.SetActive(true);
@@ -330,12 +351,13 @@ public class GameManager : MonoBehaviour
     }
     public void OpenDoorStreet()
     {
+        Debug.Log("OpenDoorStreet");
         var number = PlayerPrefs.GetInt("OpenDoorStreet");
         if (number == 1)
         {
             isOpenDoorStreet = true;
         }
-        if (inventory.idActive == 4)
+        if (inventory.CheckHandItemName("KeyFromDoorStreet")) /////////////////////////////////////// 
         {
             ClearInventory();
             Street.SetActive(true);
@@ -363,7 +385,7 @@ public class GameManager : MonoBehaviour
     }
     public void ActivateFlag()
     {
-        if (inventory.idActive == 10)
+        if (inventory.CheckHandItemName("Flag")) /////////////////////////////////////// 
         {
             ClearInventory();
             OpenMailBox[0].SetActive(true);
@@ -381,7 +403,7 @@ public class GameManager : MonoBehaviour
 
     public void CuttingLeaves()
     {
-        if (inventory.idActive == 15 && ZoomFoliage.activeSelf == true)
+        if (inventory.CheckHandItemName("Secateur") && ZoomFoliage.activeSelf == true)////////////////////////////
         {
             ClearInventory();
             Destroy(Foliage);
@@ -391,7 +413,7 @@ public class GameManager : MonoBehaviour
     }
     public void ClickBook()
     {
-        if (inventory.idActive == 8)
+        if (inventory.CheckHandItemName("GreenBook")) /////////////////////////////////////// 
         {
             ClearInventory();
             GreenBook.SetActive(true);
@@ -400,7 +422,7 @@ public class GameManager : MonoBehaviour
     }
     public void ClickDool()
     {
-        if (inventory.idActive == 9)
+        if (inventory.CheckHandItemName("Doll")) /////////////////////////////////////// 
         {
             ClearInventory();
             Dool.SetActive(true);
@@ -412,13 +434,13 @@ public class GameManager : MonoBehaviour
     }
     public void OpenFence()
     {
-        var number = PlayerPrefs.GetInt("OpenFence");
+        var number = PlayerPrefs.GetInt("Kettle");
         if (number == 1)
         {
             Fence[0].SetActive(false);
             Fence[1].SetActive(true);
         }
-        if (inventory.idActive == 20)
+        if (inventory.CheckHandItemName("Kettle")) /////////////////////////////////////// 
         {
             ClearInventory();
             Fence[0].SetActive(false);
@@ -430,7 +452,7 @@ public class GameManager : MonoBehaviour
     public GameObject Kod4916;
     public void ClickWell(GameObject gameObject)
     {
-        if(inventory.idActive == 54)
+        if(inventory.CheckHandItemName("Rope")) /////////////////////////////////////// 
         {
             ClearInventory();
             gameObject.SetActive(true);
@@ -451,7 +473,7 @@ public class GameManager : MonoBehaviour
     }
     public void FeedSquirrel()
     {
-        if (inventory.idActive == 12)
+        if (inventory.CheckHandItemName("Nuts")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Squirrel[0]);
@@ -468,7 +490,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] DoorOldHomeOpenClose;
     public void OpenCastle()
     {
-        if (inventory.idActive == 5)
+        if (inventory.CheckHandItemName("Acid")) /////////////////////////////////////// 
         {
             ClearInventory();
             Castle[0].SetActive(false);
@@ -483,7 +505,7 @@ public class GameManager : MonoBehaviour
     }
     public void ChopWood(GameObject gameObject)
     {
-        if(inventory.idActive == 6)
+        if(inventory.CheckHandItemName("Axe")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(gameObject);
@@ -494,7 +516,7 @@ public class GameManager : MonoBehaviour
     private bool icClickBrige = false;
     public void ClickBrige(GameObject BrigePanel)
     {
-        if(inventory.idActive == 18)
+        if(inventory.CheckHandItemName("FireWood")) /////////////////////////////////////// 
         {
             ClearInventory();
             BrigePanel.SetActive(true);
@@ -517,7 +539,7 @@ public class GameManager : MonoBehaviour
 
     public void RemoveWeb()
     {
-        if (inventory.idActive == 22)
+        if (inventory.CheckHandItemName("Broom")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Web);
@@ -526,7 +548,7 @@ public class GameManager : MonoBehaviour
     }
     public void ClickDeer()
     {
-        if (inventory.idActive == 24)
+        if (inventory.CheckHandItemName("Horn")) /////////////////////////////////////// 
         {
             ClearInventory();
             Horn[0].SetActive(true);
@@ -546,7 +568,7 @@ public class GameManager : MonoBehaviour
 
     public void OpenCap()
     {
-        if (inventory.idActive == 26)
+        if (inventory.CheckHandItemName("Scrap")) /////////////////////////////////////// 
         {
             ClearInventory();
             Cap[0].SetActive(false);
@@ -565,7 +587,7 @@ public class GameManager : MonoBehaviour
         {
             isOpenBasement = true;
         }
-        if (inventory.idActive == 23)
+        if (inventory.CheckHandItemName("Handle")) /////////////////////////////////////// 
         {
             ClearInventory();
             BasementOpenClose[0].SetActive(false);
@@ -582,7 +604,7 @@ public class GameManager : MonoBehaviour
     private bool isDigEarth = false;
     public void DigEarth()
     {
-        if (inventory.idActive == 29)
+        if (inventory.CheckHandItemName("Shovel")) /////////////////////////////////////// 
         {
             ClearInventory();
             Earth.SetActive(false);
@@ -593,7 +615,7 @@ public class GameManager : MonoBehaviour
     }
     public void FertilizerTree()
     {
-        if (inventory.idActive == 27 && isDigEarth)
+        if (inventory.CheckHandItemName("Bag") && isDigEarth)/////////////////////////
         {
             ClearInventory();
             Tree[0].SetActive(false);
@@ -640,16 +662,16 @@ public class GameManager : MonoBehaviour
     }
     public void StaffLeshy()
     {
-        if (inventory.idActive == 36)
+        if (inventory.CheckHandItemName("Staff")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Leshy);
-            NewItemInventory(Ball);
+            NewItemInventory("RedBall");
         }
     }
     public void ToilsDestroy(GameObject gameObject)
     {
-        if (inventory.idActive == 25)
+        if (inventory.CheckHandItemName("Knife")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Toils);
@@ -664,16 +686,16 @@ public class GameManager : MonoBehaviour
     }
     public void Water(GameObject EmptyBacket)
     {
-        if (inventory.idActive == 44)
+        if (inventory.CheckHandItemName("EmptyBucket")) /////////////////////////////////////// 
         {
             ClearInventory();
-            NewItemInventory(EmptyBacket);
+            NewItemInventory("Bucket");
             Sounds.PlayOneShot(SoundsGame[46]);
         }
     }
     public void FireFighting()
     {
-        if (inventory.idActive == 43)
+        if (inventory.CheckHandItemName("Bucket")) /////////////////////////////////////// 
         {
             Bush[0].SetActive(false);
             Bush[1].SetActive(true);
@@ -686,8 +708,9 @@ public class GameManager : MonoBehaviour
     }
     public void LightCave()
     {
-        if (inventory.idActive == 46)
+        if (inventory.CheckHandItemName("LampOn")) /////////////////////////////////////// 
         {
+            //TODO Баг с отсутсвием анимации а именно белый спрайт
             ClearInventory();
             ZoomCave.SetActive(true);
             PlayerPrefs.SetInt("LightCave", 1);
@@ -696,7 +719,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] FindAWay;
     public void FindWay()
     {
-        if (inventory.idActive == 30)
+        if (inventory.CheckHandItemName("RedBall")) /////////////////////////////////////// 
         {
             ClearInventory();
             FindAWay[0].SetActive(false);
@@ -709,14 +732,14 @@ public class GameManager : MonoBehaviour
     public GameObject[] Trap;
     public void ClickTrap()
     {
-        if (inventory.idActive == 48)
+        if (inventory.CheckHandItemName("Stick")) /////////////////////////////////////// 
         {
             ClearInventory();
             Trap[0].SetActive(false);
             Trap[1].SetActive(true);
             Trap[2].SetActive(false);
             Trap[3].SetActive(true);
-            NewItemInventory(Heart);
+            NewItemInventory("Hearth");
             Sounds.PlayOneShot(SoundsGame[30]);
             PlayerPrefs.SetInt("ClickTrap", 1);
         }
@@ -724,7 +747,7 @@ public class GameManager : MonoBehaviour
     public GameObject Beess;
     public void Bees()
     {
-        if (inventory.idActive == 40)
+        if (inventory.CheckHandItemName("SmokeOn")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Beess);
@@ -736,12 +759,12 @@ public class GameManager : MonoBehaviour
     public GameObject Jemchug;
     public void ReedpipeGoblin()
     {
-        if (inventory.idActive == 35)
+        if (inventory.CheckHandItemName("ReedPipe")) /////////////////////////////////////// 
         {
             ClearInventory();
             Nenuphars.SetActive(true);
             Sounds.PlayOneShot(SoundsGame[7]);
-            NewItemInventory(Jemchug);
+            NewItemInventory("Pearl");
             PlayerPrefs.SetInt("GoblinReedpipe", 1);
         }
     }
@@ -749,7 +772,7 @@ public class GameManager : MonoBehaviour
     public Hook hook;
     public void ClickScarecrow()
     {
-        if (inventory.idActive == 32)
+        if (inventory.CheckHandItemName("Hearth")) /////////////////////////////////////// 
         {
             ClearInventory();
             HeartScarecrow.SetActive(true);
@@ -762,7 +785,7 @@ public class GameManager : MonoBehaviour
     public GameObject FlapDontZoom;
     public void ClickFlap(GameObject gameObject)
     {
-        if (inventory.idActive == 21)
+        if (inventory.CheckHandItemName("Screwdriver")) /////////////////////////////////////// 
         {
             gameObject.SetActive(true);
             flap += 1;
@@ -778,7 +801,7 @@ public class GameManager : MonoBehaviour
     }
     public void ClearLeaves(GameObject gameObject)
     {
-        if (inventory.idActive == 53)
+        if (inventory.CheckHandItemName("Rake")) /////////////////////////////////////// 
         {
             ClearInventory();
             gameObject.SetActive(false);
@@ -791,7 +814,7 @@ public class GameManager : MonoBehaviour
     private bool isOpenDoorTree = false;
     public void OpenDoorTree()
     {
-        if (inventory.idActive == 49)
+        if (inventory.CheckHandItemName("StoneBlue")) /////////////////////////////////////// 
         {
             ClearInventory();
             MiniGamePanel.SetActive(true);
@@ -806,7 +829,7 @@ public class GameManager : MonoBehaviour
     public GameObject GoForestAndWell;
     public void BoomTree(GameObject gameObject)
     {
-        if (inventory.idActive == 50)
+        if (inventory.CheckHandItemName("DynamiteOn")) /////////////////////////////////////// 
         {
             ClearInventory();
             GoForestAndWell.SetActive(true);
@@ -818,7 +841,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] Flower;
     public void EatFlower()
     {
-        if (inventory.idActive == 58)
+        if (inventory.CheckHandItemName("Moth")) /////////////////////////////////////// 
         {
             ClearInventory();
             Flower[0].SetActive(false);
@@ -831,7 +854,7 @@ public class GameManager : MonoBehaviour
     private bool VagonetkaSWheel;
     public void ClickVagonetka()
     {
-        if (inventory.idActive == 41)
+        if (inventory.CheckHandItemName("Wheel")) /////////////////////////////////////// 
         {
             ClearInventory();
             Vagonetka[0].SetActive(false);
@@ -849,17 +872,17 @@ public class GameManager : MonoBehaviour
     public GameObject Ventil;
     public void BreakUpStone(GameObject gameObject)
     {
-        if (inventory.idActive == 52)
+        if (inventory.CheckHandItemName("PickAxe")) /////////////////////////////////////// 
         {
             ClearInventory();
-            NewItemInventory(Ventil);
+            NewItemInventory("Ventil");
             Destroy(gameObject);
             PlayerPrefs.SetInt("BreakUpStone", 1);
         }
     }
     public void OpenDoorCave2(GameObject gameObject)
     {
-        if (inventory.idActive == 56)
+        if (inventory.CheckHandItemName("KeyWell")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(gameObject);
@@ -870,7 +893,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] HeadDragon;
     public void ClickStoneHeadDragon()
     {
-        if (inventory.idActive == 68)
+        if (inventory.CheckHandItemName("BlueCrystal")) /////////////////////////////////////// 
         {
             ClearInventory();
             HeadDragon[0].SetActive(false);
@@ -882,27 +905,27 @@ public class GameManager : MonoBehaviour
     public GameObject KulonObject;
     public void ClickKulon(GameObject Kulon)
     {
-        if (inventory.idActive == 64)
+        if (inventory.CheckHandItemName("FishingRod")) /////////////////////////////////////// 
         {
             ClearInventory();
-            NewItemInventory(Kulon);
+            NewItemInventory("Kulon");
             Destroy(KulonObject);
             Sounds.PlayOneShot(SoundsGame[29]);
         }
     }
-    public void ReturnKulon(GameObject Lupa)
+    public void ReturnKulon()
     {
-        if (inventory.idActive == 60)
+        if (inventory.CheckHandItemName("Kulon")) /////////////////////////////////////// 
         {
             ClearInventory();
-            NewItemInventory(Lupa);
+            NewItemInventory("Lupa");
         }
     }
     private int findZnak = 0;
     public GameObject[] DoorCave;
     public void FindZnak(GameObject gameObject)
     {
-        if (inventory.idActive == 59)
+        if (inventory.CheckHandItemName("Lupa")) /////////////////////////////////////// 
         {
             findZnak += 1;
             gameObject.SetActive(true);
@@ -920,7 +943,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] Grob;
     public void OpenGrob()
     {
-        if (inventory.idActive == 71)
+        if (inventory.CheckHandItemName("Axe2")) /////////////////////////////////////// 
         {
             ClearInventory();
             Grob[0].SetActive(false);
@@ -933,7 +956,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] Fontanium;
     public void ClickFountain()
     {
-        if (inventory.idActive == 63)
+        if (inventory.CheckHandItemName("Ventil")) /////////////////////////////////////// 
         {
             ClearInventory();
             Fontanium[0].SetActive(false);
@@ -945,7 +968,7 @@ public class GameManager : MonoBehaviour
     }
     public void ClickJungle(GameObject gameObject)
     {
-        if (inventory.idActive == 67)
+        if (inventory.CheckHandItemName("SharpBraid")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(gameObject);
@@ -965,7 +988,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] Box;
     public void OpenBox(GameObject Shnurok)
     {
-        if (inventory.idActive == 70)
+        if (inventory.CheckHandItemName("Scissors")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Shnurok);
@@ -982,11 +1005,11 @@ public class GameManager : MonoBehaviour
     public GameObject BoxMiniGame;
     public void ClickShar(GameObject Shar)
     {
-        if (inventory.idActive == 72)
+        if (inventory.CheckHandItemName("Ball2")) /////////////////////////////////////// 
         {
             ClearInventory();
             Shar.SetActive(true);
-            NewItemInventory(Axe);
+            NewItemInventory("Axe2");
             StartCoroutine(DelayCloseBoxMiniGame());
             Sounds.PlayOneShot(SoundsGame[32]);
             PlayerPrefs.SetInt("ClickShar", 1);
@@ -1000,7 +1023,7 @@ public class GameManager : MonoBehaviour
 
     public void ClickApples(GameObject Apples)
     {
-        if (inventory.idActive == 78)
+        if (inventory.CheckHandItemName("Basket")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Apples);
@@ -1010,7 +1033,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] Wolf;
     public void FreezWolf()
     {
-        if (inventory.idActive == 66)
+        if (inventory.CheckHandItemName("PotionFreeze")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Wolf[0]);
@@ -1021,7 +1044,7 @@ public class GameManager : MonoBehaviour
     }
     public void RemoveCoal(GameObject Coal)
     {
-        if (inventory.idActive == 74)
+        if (inventory.CheckHandItemName("PokerPok")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(Coal);
@@ -1031,7 +1054,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] ClockDoor;
     public void ClickClock()
     {
-        if (inventory.idActive == 76)
+        if (inventory.CheckHandItemName("Pendul")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(ClockDoor[0]);
@@ -1046,7 +1069,7 @@ public class GameManager : MonoBehaviour
     public GameObject BedRoomGrandMother;
     public void OpenDoorGrandMother()
     {
-        if (inventory.idActive == 56)
+        if (inventory.CheckHandItemName("OpenDoorGrandMother")) /////////////////////////////////////// 
         {
             ClearInventory();
             isOpenDoorGrandMother = true;
@@ -1060,35 +1083,35 @@ public class GameManager : MonoBehaviour
     private int ingredient = 0;
     public void Potion(GameObject PotionObj)
     {
-        if (ingredient == 0 && inventory.idActive == 31)
+        if (ingredient == 0 && inventory.CheckHandItemName("Flower")) /////////////////////////////////////// 
         {
             ClearInventory();
             PotionObj.GetComponent<Image>().color = new Color(0, 1, 0.456346f);
             ingredient += 1;
             Sounds.PlayOneShot(SoundsGame[12]);
         }
-        else if (ingredient == 1 && inventory.idActive == 38)
+        else if (ingredient == 1 && inventory.CheckHandItemName("Pearl")) /////////////////////////////////////// 
         {
             ClearInventory();
             PotionObj.GetComponent<Image>().color = new Color(0.8808007f, 1, 0);
             ingredient += 1;
             Sounds.PlayOneShot(SoundsGame[12]);
         }
-        else if (ingredient == 2 && inventory.idActive == 57)
+        else if (ingredient == 2 && inventory.CheckHandItemName("StoneGreen")) /////////////////////////////////////// 
         {
             ClearInventory();
             PotionObj.GetComponent<Image>().color = new Color(0, 0.3683066f, 1);
             ingredient += 1;
             Sounds.PlayOneShot(SoundsGame[12]);
         }
-        else if (ingredient == 3 && inventory.idActive == 69)
+        else if (ingredient == 3 && inventory.CheckHandItemName("Berries")) /////////////////////////////////////// 
         {
             ClearInventory();
             PotionObj.GetComponent<Image>().color = new Color(1, 0, 0.220675f);
             ingredient += 1;
             Sounds.PlayOneShot(SoundsGame[12]);
         }
-        else if (ingredient == 4 && inventory.idActive == 75)
+        else if (ingredient == 4 && inventory.CheckHandItemName("LivingWater")) /////////////////////////////////////// 
         {
             ClearInventory();
             PotionObj.GetComponent<Image>().color = new Color(0, 1, 0.7507141f);
@@ -1103,7 +1126,7 @@ public class GameManager : MonoBehaviour
         if (ingredient == 5)
         {
             Destroy(Plate);
-            NewItemInventory(PlateItem);
+            NewItemInventory("Potion");
         }
     }
     public GameObject[] BookIngridient;
@@ -1115,7 +1138,7 @@ public class GameManager : MonoBehaviour
     public GameObject Picture;
     public void ClickPicture()
     {
-        if (inventory.idActive == 77)
+        if (inventory.CheckHandItemName("Picture")) /////////////////////////////////////// 
         {
             ClearInventory();
             Picture.SetActive(true);
@@ -1129,7 +1152,7 @@ public class GameManager : MonoBehaviour
 
     public void ClickGrandMother()
     {
-        if(inventory.idActive == 79)
+        if(inventory.CheckHandItemName("ClickGrandMother")) /////////////////////////////////////// 
         {
             ClearInventory();
             Destroy(GrandMother[0]);
@@ -1174,7 +1197,7 @@ public class GameManager : MonoBehaviour
         {
             DoorGranBotherBedRoom = true;
         }
-        if (inventory.idActive == 73)
+        if (inventory.CheckHandItemName("Key3")) /////////////////////////////////////// 
         {
             ClearInventory();
             gameObject.SetActive(true);
@@ -1197,24 +1220,19 @@ public class GameManager : MonoBehaviour
     //----------------------------------------------------------------//
     void ClearInventory()
     {
-        inventoryBttn = GameObject.FindGameObjectWithTag("IconItem");
-        Destroy(Item.choiceItemSlot);
-        Destroy(inventoryBttn);
-        inventory.idActive = 0;
-        inventory.mailIsFull = false;
+        //inventoryBttn = GameObject.FindGameObjectWithTag("IconItem");
+        //Destroy(itemController.choiceItemSlot);
+        //Destroy(inventoryBttn);
+        //inventory.SelectedItemID = 0;
+        //inventory.mailIsFull = false;
+        inventory.Unequipt(true);
     }
-    void NewItemInventory(GameObject gameObject)
+
+    void NewItemInventory(string name)
     {
-        for (int i = 0; i < inventory.slots.Length; i++)
-        {
-            if (inventory.Full[i] == false)
-            {
-                inventory.Full[i] = true;
-                Instantiate(gameObject, inventory.slots[i].transform);
-                break;
-            }
-        }
+        inventory.CreateItemByName(name);
     }
+
     public void MusicPlay(AudioClip audioClip)
     {
         Music.clip = audioClip;

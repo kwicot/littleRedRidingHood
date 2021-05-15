@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using SO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,12 +12,15 @@ public class ChestCave : MonoBehaviour
     public GameManager gameManager;
     private Inventory inventory;
     public GameObject Kod;
-    private Item Item;
+    private ItemController itemController;
+
+
+    public SOItem QuestItem;
     void Start()
     {
         gameManager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameManager>();
         inventory = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Inventory>();
-        Item = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Item>();
+        itemController = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<ItemController>();
     }
 
     public void NumberCod1()
@@ -66,19 +70,7 @@ public class ChestCave : MonoBehaviour
         if (number1 == 4 && number2 == 9 && number3 == 1 && number4 == 6)
         {
             Openchest.SetActive(true);
-            if (inventory.idActive == 55)
-            {
-                Kod = GameObject.FindGameObjectWithTag("IconItem");
-                Destroy(Kod);
-                Destroy(Item.choiceItemSlot);
-                inventory.idActive = 0;
-                inventory.mailIsFull = false;
-            }
-            else if (inventory.idActive != 55)
-            {
-                Kod = GameObject.FindGameObjectWithTag("Kod");
-                Destroy(Kod);
-            }
+            inventory.RemoveItem(QuestItem);
         }
         else
         {
