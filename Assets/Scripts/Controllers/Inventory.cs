@@ -16,6 +16,8 @@ public class Inventory : MonoBehaviour
 
     public bool CraftMode = false;
 
+    public int ItemsCount => ItemsList.Count;
+
     private void Start()
     {
         manager = FindObjectOfType<GameManager>();
@@ -74,18 +76,23 @@ public class Inventory : MonoBehaviour
         RemoveItem(HandSlot.selectedItemController.name);
         CreateItemByName(recept.ResultItem.Name);
 
-        
+
         CraftMode = false;
+        manager.Data.SaveData();
     }
 
-    public void AddItem(ItemController itemController)
+    public void AddItem(ItemController itemController, bool WithSave = true)
     {
         //Проверка есть ли такой предмет
         foreach (var _item in ItemsList)
-            if(_item == itemController)
+            if(_item.MainData.Name == itemController.MainData.Name)
             { 
                 return;
             }
+        
+        if(HandSlot.selectedItemController != null)
+            if(HandSlot.selectedItemController.MainData.Name == itemController.MainData.Name)
+                return;
         
         
         //Проверка наличия места
@@ -106,13 +113,15 @@ public class Inventory : MonoBehaviour
 
 
         Debug.Log("Item added successful");
+        if(WithSave)manager.Data.SaveData();
     }
 
     public void RemoveItem(ItemController item)
     {
-        if (HandSlot.selectedItemController != null && HandSlot.selectedItemController == item) HandSlot.selectedItemController = null;
+        if (HandSlot.selectedItemController != null && HandSlot.selectedItemController.MainData.Name == item.MainData.Name) HandSlot.selectedItemController = null;
         Destroy(item.gameObject);
         RemoveNulls();
+        manager.Data.SaveData();
     }
     public void RemoveItem(string name)
     {
@@ -130,6 +139,7 @@ public class Inventory : MonoBehaviour
                 return;
             }
         }
+        manager.Data.SaveData();
     }
     public void RemoveItem(SOItem item)
     {
@@ -143,7 +153,9 @@ public class Inventory : MonoBehaviour
         }
 
         RemoveNulls();
+        manager.Data.SaveData();
     }
+    
 
     private void RemoveNulls()
     {
@@ -163,6 +175,7 @@ public class Inventory : MonoBehaviour
                 Unequipt();
                 Debug.Log("This item was been om hand and removed");
                 ChangeIcon();
+                manager.Data.SaveData();
                 return;
             }
             else
@@ -186,6 +199,7 @@ public class Inventory : MonoBehaviour
                 HandSlot.selectedItemController = itemController;
                 Debug.Log("Equipt");
                 ChangeIcon();
+                manager.Data.SaveData();
                 return;
             }
         }
@@ -219,6 +233,7 @@ public class Inventory : MonoBehaviour
         }
         HandSlot.selectedItemController = null;
         ChangeIcon();
+        manager.Data.SaveData();
     }
     public void CreateItemById(int id, out ItemController controller)
     {
@@ -230,6 +245,7 @@ public class Inventory : MonoBehaviour
             if (item.ID == id)
             {
                 var obj = Instantiate(item.Prefab);
+                obj.GetComponent<ItemController>().MainData = item;
                 AddItem(obj.GetComponent<ItemController>());
                 controller = obj.GetComponent<ItemController>();
                 return;
@@ -238,7 +254,7 @@ public class Inventory : MonoBehaviour
 
         controller = null;
     }
-    public void CreateItemByName(string name, out ItemController controller)
+    public void CreateItemByName(string name, out ItemController controller,bool WithSave = true)
     {
         SOItem item;
 
@@ -248,13 +264,31 @@ public class Inventory : MonoBehaviour
             if (item.Name == name)
             {
                 var obj = Instantiate(item.Prefab);
-                AddItem(obj.GetComponent<ItemController>());
+                obj.GetComponent<ItemController>().MainData = item;
+                AddItem(obj.GetComponent<ItemController>(), WithSave);
                 controller = obj.GetComponent<ItemController>();
                 return;
             }
         }
 
         controller = null;
+    }
+    public void CreateItemByName(List<string> names)
+    {
+        SOItem item;
+        foreach (var name in names)
+        {
+            for (int i = 0; i < Holder.ItemsCount; i++)
+            {
+                item = Holder[i];
+                if (item.Name == name)
+                {
+                    var obj = Instantiate(item.Prefab);
+                    obj.GetComponent<ItemController>().MainData = item;
+                    AddItem(obj.GetComponent<ItemController>(), false);
+                }
+            }
+        }
     }
     public void CreateItemByName(string name)
     {

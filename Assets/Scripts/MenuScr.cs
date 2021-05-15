@@ -71,6 +71,7 @@ public class MenuScr : MonoBehaviour
         PlayerPrefs.SetInt("Play", 1);
         PlayerPrefs.SetInt("FIRSTTIMEOPENING", 0);
         PlayerPrefs.SetInt("PlayStartMusic", 1);
+        gameManager.Data.NewGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void ResumeGame(GameObject ResumeGame)
@@ -78,5 +79,6 @@ public class MenuScr : MonoBehaviour
         ResumeGame.SetActive(true);
         Menu.SetActive(false);
         gameManager.MusicPlay(gameManager.MusicBG);
+        gameManager.Data.LoadData();
     }
 }

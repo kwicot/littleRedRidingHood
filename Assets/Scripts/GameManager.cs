@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GoogleMobileAds.Api;
+using Models;
 using SO;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public SOItemsHolder Holder;
-    
+    public GameData Data;
     
     
     
@@ -132,6 +133,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Data = new GameData();
         if (PlayerPrefs.GetInt("Ver")==1)
         {
             menuScr.RussiaVersion();
@@ -164,6 +166,15 @@ public class GameManager : MonoBehaviour
         {
             PlayerPrefs.DeleteAll();
         }
+
+        Data.inventory = inventory;
+        
+        ////
+    }
+
+    public void FindButtons()
+    {
+        
     }
     public void Help()
     {
@@ -1244,7 +1255,7 @@ public class GameManager : MonoBehaviour
     }
     void SaveProgres(string KeyName)
     {
-        var number = PlayerPrefs.GetInt(KeyName);
+       
         PlayerPrefs.SetInt(KeyName, 1);
     }
     //----------------------------------------------------------------//
