@@ -17,10 +17,10 @@ public class MenuScr : MonoBehaviour
     private int saveLanguages;
     void Start()
     {
-        if (PlayerPrefs.GetInt("Privacy") == 1)
+        if (PlayerPrefs.GetInt("Privacy") == 0)
         {
             Privacy.SetActive(true);
-            PlayerPrefs.SetInt("Privacy", 0);
+            PlayerPrefs.SetInt("Privacy", 1);
         }
         gameManager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameManager>();
         if (PlayerPrefs.GetInt("Ver") == 0)
@@ -79,7 +79,11 @@ public class MenuScr : MonoBehaviour
     }
     public void ResumeGame(GameObject ResumeGame)
     {
-        Menu.SetActive(false);
-        SaveController.Load();
+        if (SaveController.HasData())
+        {
+            Menu.SetActive(false);
+            SaveController.Load();
+        }
+        else Play();
     }
 }

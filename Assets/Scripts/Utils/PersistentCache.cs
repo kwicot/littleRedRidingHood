@@ -152,4 +152,33 @@ public static class PersistentCache
 
         return false;
     }
+
+    public static bool Remove<T>()
+    {
+        if (!Initialized)
+            Init();
+        
+        bool result = Remove(typeof(T).Name);
+        return result;
+    }
+
+    public static bool HasKey(string key)
+    {
+        if (!Initialized)
+            Init();
+        
+        var fullPath = GetPath(key);
+        if (File.Exists(fullPath))
+            return true;
+        else return false;
+    }
+
+    public static bool HasKey<T>()
+    {
+        if (!Initialized)
+            Init();
+        
+        bool result = HasKey(typeof(T).Name);
+        return result;
+    }
 }

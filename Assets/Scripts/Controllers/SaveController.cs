@@ -170,5 +170,11 @@ namespace Controllers
             Save();
             Debug.Log("Saved");
         }
+
+        public bool HasData()
+        {
+            if (PersistentCache.HasKey("Inventory") && PersistentCache.HasKey("Objects")) return true;
+            else return false;
+        }
     }
 }
