@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GoogleMobileAds.Api;
-using Models;
 using SO;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public SOItemsHolder Holder;
-    public GameData Data;
     
     
     
@@ -133,7 +131,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Data = new GameData();
         if (PlayerPrefs.GetInt("Ver")==1)
         {
             menuScr.RussiaVersion();
@@ -149,25 +146,11 @@ public class GameManager : MonoBehaviour
         {
             Music.Play();
         }
-        if(PlayerPrefs.GetInt("ChoiseObject") > 0)
-        {
-            var number = PlayerPrefs.GetInt("ChoiseObject");
-            //for (int i = 0; i < inventory.slots.Length; i++)
-            //{
-            //    if (inventory.Full[i] == false)
-            //    {
-            //        inventory.Full[i] = true;
-            //        Instantiate(slot.Item[number - 1], inventory.slots[i].transform);
-            //        break;
-            //    }
-            //}
-        }
         if (DelAll)
         {
             PlayerPrefs.DeleteAll();
         }
 
-        Data.inventory = inventory;
         
         ////
     }
@@ -250,7 +233,6 @@ public class GameManager : MonoBehaviour
         CloseDoorCell.SetActive(false);
         OpenDoorCell.SetActive(true);
         Feed.SetActive(true);
-        PlayerPrefs.SetInt("OpenCellDoor", 1);
         Sounds.PlayOneShot(SoundsGame[1]);
 
     }
@@ -270,18 +252,12 @@ public class GameManager : MonoBehaviour
     public void OpenDoor()
     {
         Debug.Log("OpenDoor");
-        var number = PlayerPrefs.GetInt("DoorOpenBR");
-        if (number == 1)
-        {
-            isOpenDoor = true;
-        }
         if (inventory.CheckHandItemName("DoorHandle"))/////////////////////////////////////// 
         {
             ClearInventory();
             LivingRoom.SetActive(false);
             BedRoom.SetActive(true);
             isOpenDoor = true;
-            PlayerPrefs.SetInt("DoorOpenBR", 1);
             Sounds.PlayOneShot(SoundsGame[40]);
         }
         else if (isOpenDoor)
@@ -309,7 +285,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Gramophone[0].SetActive(true);
             Gramophone[1].SetActive(true);   
-            PlayerPrefs.SetInt("GramophoneClick", 1);
             Sounds.PlayOneShot(SoundsGame[8]);
         }
     }
@@ -348,7 +323,6 @@ public class GameManager : MonoBehaviour
             Notes.SetActive(true);
             RoofPiano.SetActive(true);
             Nuts.SetActive(true);
-            PlayerPrefs.SetInt("ZoomPiano", 1);
             Sounds.PlayOneShot(SoundsGame[16]);
         }
         else if (ZoomPiano.activeSelf) ZoomPiano.SetActive(false);
@@ -363,18 +337,12 @@ public class GameManager : MonoBehaviour
     public void OpenDoorStreet()
     {
         Debug.Log("OpenDoorStreet");
-        var number = PlayerPrefs.GetInt("OpenDoorStreet");
-        if (number == 1)
-        {
-            isOpenDoorStreet = true;
-        }
         if (inventory.CheckHandItemName("KeyFromDoorStreet")) /////////////////////////////////////// 
         {
             ClearInventory();
             Street.SetActive(true);
             LivingRoom.SetActive(false);
             isOpenDoorStreet = true;
-            PlayerPrefs.SetInt("OpenDoorStreet", 1);
             Sounds.PlayOneShot(SoundsGame[13]);
         }
         else if (isOpenDoorStreet)
@@ -402,7 +370,6 @@ public class GameManager : MonoBehaviour
             OpenMailBox[0].SetActive(true);
             OpenMailBox[1].SetActive(true);
             Destroy(OpenMailBox[2]);
-            PlayerPrefs.SetInt("ActiveFlag", 1);
             Sounds.PlayOneShot(SoundsGame[15]);
         }
     }
@@ -419,7 +386,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Destroy(Foliage);
             Sounds.PlayOneShot(SoundsGame[14]);
-            PlayerPrefs.SetInt("CuttingLeaves", 1);
         }
     }
     public void ClickBook()
@@ -440,23 +406,15 @@ public class GameManager : MonoBehaviour
             Roof.SetActive(false);
             RaycastHome.SetActive(false);
             Sounds.PlayOneShot(SoundsGame[36]);
-            PlayerPrefs.SetInt("ClickDoolHome", 1);
         }
     }
     public void OpenFence()
     {
-        var number = PlayerPrefs.GetInt("Kettle");
-        if (number == 1)
-        {
-            Fence[0].SetActive(false);
-            Fence[1].SetActive(true);
-        }
         if (inventory.CheckHandItemName("Kettle")) /////////////////////////////////////// 
         {
             ClearInventory();
             Fence[0].SetActive(false);
             Fence[1].SetActive(true);
-            PlayerPrefs.SetInt("OpenFence", 1);
             Sounds.PlayOneShot(SoundsGame[1]);
         }
     }
@@ -467,7 +425,6 @@ public class GameManager : MonoBehaviour
         {
             ClearInventory();
             gameObject.SetActive(true);
-            PlayerPrefs.SetInt("ClickWell", 1);
         }
     }
 
@@ -489,7 +446,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Destroy(Squirrel[0]);
             Destroy(Squirrel[1]);                    //<--------------
-            PlayerPrefs.SetInt("FeedSquirrel", 1);
             Sounds.PlayOneShot(SoundsGame[3]);
         }
     }
@@ -511,7 +467,6 @@ public class GameManager : MonoBehaviour
             Sounds.PlayOneShot(SoundsGame[1]);
             Destroy(DoorOldHomeOpenClose[0]);
             DoorOldHomeOpenClose[1].SetActive(true);
-            PlayerPrefs.SetInt("OpenCastle", 1);
         }
     }
     public void ChopWood(GameObject gameObject)
@@ -520,7 +475,6 @@ public class GameManager : MonoBehaviour
         {
             ClearInventory();
             Destroy(gameObject);
-            PlayerPrefs.SetInt("ChopWood", 1);
             Sounds.PlayOneShot(SoundsGame[44]);
         }
     }
@@ -532,7 +486,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             BrigePanel.SetActive(true);
             icClickBrige = true;
-            PlayerPrefs.SetInt("ClickBrige", 1);
         }
         else if(icClickBrige)
         {
@@ -554,7 +507,6 @@ public class GameManager : MonoBehaviour
         {
             ClearInventory();
             Destroy(Web);
-            PlayerPrefs.SetInt("RemoveWeb", 1);
         }
     }
     public void ClickDeer()
@@ -565,7 +517,6 @@ public class GameManager : MonoBehaviour
             Horn[0].SetActive(true);
             Horn[1].SetActive(true);
             Panel.SetActive(false);
-            PlayerPrefs.SetInt("ClickDeer", 1);
         }
     }
 
@@ -574,7 +525,6 @@ public class GameManager : MonoBehaviour
         Bear[0].SetActive(false);
         Bear[1].SetActive(true);
         Sounds.PlayOneShot(SoundsGame[41]);
-        PlayerPrefs.SetInt("ClickBear", 1);
     }
 
     public void OpenCap()
@@ -587,24 +537,17 @@ public class GameManager : MonoBehaviour
             Cap[2].SetActive(false);
             Cap[3].SetActive(true);
             Sounds.PlayOneShot(SoundsGame[25]);
-            PlayerPrefs.SetInt("OpenCap", 1);
         }
     }
     private bool isOpenBasement = false;
     public void OpenBasement()
     {
-        var number = PlayerPrefs.GetInt("OpenBasement");
-        if (number == 1)
-        {
-            isOpenBasement = true;
-        }
         if (inventory.CheckHandItemName("Handle")) /////////////////////////////////////// 
         {
             ClearInventory();
             BasementOpenClose[0].SetActive(false);
             BasementOpenClose[1].SetActive(true);
             isOpenBasement = true;
-            PlayerPrefs.SetInt("OpenBasement", 1);
         }
         else if (isOpenBasement)
         {
@@ -621,7 +564,6 @@ public class GameManager : MonoBehaviour
             Earth.SetActive(false);
             isDigEarth = true;
             Sounds.PlayOneShot(SoundsGame[26]);
-            PlayerPrefs.SetInt("DigEarth", 1);
         }
     }
     public void FertilizerTree()
@@ -688,7 +630,6 @@ public class GameManager : MonoBehaviour
             Destroy(Toils);
             Destroy(gameObject);
             Sounds.PlayOneShot(SoundsGame[19]);
-            PlayerPrefs.SetInt("ToilsDestroy", 1);
         }
     }
     public void DestroyClickObject(GameObject gameObject)
@@ -713,7 +654,6 @@ public class GameManager : MonoBehaviour
             Bush[2].SetActive(false);
             Bush[3].SetActive(true);
             ClearInventory();
-            PlayerPrefs.SetInt("FireFighting", 1);
             Sounds.PlayOneShot(SoundsGame[9]);
         }
     }
@@ -724,7 +664,6 @@ public class GameManager : MonoBehaviour
             //TODO Баг с отсутсвием анимации а именно белый спрайт
             ClearInventory();
             ZoomCave.SetActive(true);
-            PlayerPrefs.SetInt("LightCave", 1);
         }
     }
     public GameObject[] FindAWay;
@@ -737,7 +676,6 @@ public class GameManager : MonoBehaviour
             FindAWay[1].SetActive(true);
             FindAWay[2].SetActive(true);
             Sounds.PlayOneShot(SoundsGame[38]);
-            PlayerPrefs.SetInt("FindWay", 1);
         }
     }
     public GameObject[] Trap;
@@ -752,7 +690,6 @@ public class GameManager : MonoBehaviour
             Trap[3].SetActive(true);
             NewItemInventory("Hearth");
             Sounds.PlayOneShot(SoundsGame[30]);
-            PlayerPrefs.SetInt("ClickTrap", 1);
         }
     }
     public GameObject Beess;
@@ -763,7 +700,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Destroy(Beess);
             Sounds.PlayOneShot(SoundsGame[20]);
-            PlayerPrefs.SetInt("Bees", 1);
         }
     }
     public GameObject Nenuphars;
@@ -776,7 +712,6 @@ public class GameManager : MonoBehaviour
             Nenuphars.SetActive(true);
             Sounds.PlayOneShot(SoundsGame[7]);
             NewItemInventory("Pearl");
-            PlayerPrefs.SetInt("GoblinReedpipe", 1);
         }
     }
     public GameObject HeartScarecrow;
@@ -788,7 +723,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             HeartScarecrow.SetActive(true);
             hook.isClick = true;
-            PlayerPrefs.SetInt("ClickScarecrow", 1);
         }
     }
     private int flap = 0;
@@ -806,7 +740,6 @@ public class GameManager : MonoBehaviour
                 ClearInventory();
                 FlapDontZoom.SetActive(false);
                 Flap.isClick = true;
-                PlayerPrefs.SetInt("ClickFlap", 1);
             }
         }
     }
@@ -817,7 +750,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             gameObject.SetActive(false);
             Sounds.PlayOneShot(SoundsGame[34]);
-            PlayerPrefs.SetInt("ClearLeaves", 1);
         }
     }
     public GameObject MiniGamePanel;
@@ -830,7 +762,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             MiniGamePanel.SetActive(true);
             isOpenDoorTree = true;
-            PlayerPrefs.SetInt("OpenDoorTree", 1);
         }
         else if (isOpenDoorTree == true)
         {
@@ -846,7 +777,6 @@ public class GameManager : MonoBehaviour
             GoForestAndWell.SetActive(true);
             Destroy(gameObject);
             Sounds.PlayOneShot(SoundsGame[6]);
-            PlayerPrefs.SetInt("BoomTree", 1);
         }
     }
     public GameObject[] Flower;
@@ -858,7 +788,6 @@ public class GameManager : MonoBehaviour
             Flower[0].SetActive(false);
             Flower[1].SetActive(true);
             Sounds.PlayOneShot(SoundsGame[18]);
-            PlayerPrefs.SetInt("EatFlower", 1);
         }
     }
     public GameObject[] Vagonetka;
@@ -871,7 +800,6 @@ public class GameManager : MonoBehaviour
             Vagonetka[0].SetActive(false);
             Vagonetka[1].SetActive(true);
             VagonetkaSWheel = true;
-            PlayerPrefs.SetInt("ClickVagonetka", 1);
         }
         else if (VagonetkaSWheel == true)
         {
@@ -888,7 +816,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             NewItemInventory("Ventil");
             Destroy(gameObject);
-            PlayerPrefs.SetInt("BreakUpStone", 1);
         }
     }
     public void OpenDoorCave2(GameObject gameObject)
@@ -898,7 +825,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Destroy(gameObject);
             Sounds.PlayOneShot(SoundsGame[14]);
-            PlayerPrefs.SetInt("OpenDoorCave2", 1);
         }
     }
     public GameObject[] HeadDragon;
@@ -910,7 +836,6 @@ public class GameManager : MonoBehaviour
             HeadDragon[0].SetActive(false);
             HeadDragon[1].SetActive(true);
             Sounds.PlayOneShot(SoundsGame[37]);
-            PlayerPrefs.SetInt("ClickStoneHeadDragon", 1);
         }
     }
     public GameObject KulonObject;
@@ -947,7 +872,6 @@ public class GameManager : MonoBehaviour
                 DoorCave[0].SetActive(false);
                 DoorCave[1].SetActive(true);
                 Sounds.PlayOneShot(SoundsGame[45]);
-                PlayerPrefs.SetInt("FindZnak", 1);
             }
         }
     }
@@ -960,7 +884,6 @@ public class GameManager : MonoBehaviour
             Grob[0].SetActive(false);
             Grob[1].SetActive(true);
             Grob[2].SetActive(true);
-            PlayerPrefs.SetInt("OpenGrob", 1);
             Sounds.PlayOneShot(SoundsGame[35]);
         }
     }
@@ -973,7 +896,6 @@ public class GameManager : MonoBehaviour
             Fontanium[0].SetActive(false);
             Fontanium[1].SetActive(true);
             Sounds.PlayOneShot(SoundsGame[21]);
-            PlayerPrefs.SetInt("ClickFountain", 1);
 
         }
     }
@@ -984,7 +906,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Destroy(gameObject);
             Sounds.PlayOneShot(SoundsGame[22]);
-            PlayerPrefs.SetInt("ClickJungle", 1);
         }
     }
     public int MiniGamePuzzleFinal, MiniGamePuzzleFinal1, MiniGamePuzzleFinal2;
@@ -1004,7 +925,6 @@ public class GameManager : MonoBehaviour
             ClearInventory();
             Destroy(Shnurok);
             isOpenBox = true;
-            PlayerPrefs.SetInt("OpenBox", 1);
         }
         else if (isOpenBox == true)
         {
@@ -1023,7 +943,6 @@ public class GameManager : MonoBehaviour
             NewItemInventory("Axe2");
             StartCoroutine(DelayCloseBoxMiniGame());
             Sounds.PlayOneShot(SoundsGame[32]);
-            PlayerPrefs.SetInt("ClickShar", 1);
         }
     }
     IEnumerator DelayCloseBoxMiniGame()
@@ -1050,7 +969,6 @@ public class GameManager : MonoBehaviour
             Destroy(Wolf[0]);
             Wolf[1].SetActive(true);
             Sounds.PlayOneShot(SoundsGame[31]);
-            PlayerPrefs.SetInt("FreezWolf", 1);
         }
     }
     public void RemoveCoal(GameObject Coal)
@@ -1059,7 +977,6 @@ public class GameManager : MonoBehaviour
         {
             ClearInventory();
             Destroy(Coal);
-            PlayerPrefs.SetInt("RemoveCoal", 1);
         }
     }
     public GameObject[] ClockDoor;
@@ -1072,7 +989,6 @@ public class GameManager : MonoBehaviour
             ClockDoor[1].SetActive(true);
             ClockDoor[2].SetActive(true);
             ClockDoor[3].SetActive(true);
-            PlayerPrefs.SetInt("ClickClock", 1);
 
         }
     }
@@ -1153,7 +1069,6 @@ public class GameManager : MonoBehaviour
         {
             ClearInventory();
             Picture.SetActive(true);
-            PlayerPrefs.SetInt("ClickPicture", 1);
         }
     }
     public GameObject[] GrandMother;
@@ -1203,18 +1118,12 @@ public class GameManager : MonoBehaviour
     private bool DoorGranBotherBedRoom = false;
     public void GoBedRoomGrandMother(GameObject gameObject)
     {
-        var number = PlayerPrefs.GetInt("GoBedRoomGrandMother");
-        if (number == 1)
-        {
-            DoorGranBotherBedRoom = true;
-        }
         if (inventory.CheckHandItemName("Key3")) /////////////////////////////////////// 
         {
             ClearInventory();
             gameObject.SetActive(true);
             MusicPlay(GrandMotherMusic);
             DoorGranBotherBedRoom = true;
-            PlayerPrefs.SetInt("GoBedRoomGrandMother", 1);
 
         }
         else if(DoorGranBotherBedRoom)
@@ -1231,11 +1140,6 @@ public class GameManager : MonoBehaviour
     //----------------------------------------------------------------//
     void ClearInventory()
     {
-        //inventoryBttn = GameObject.FindGameObjectWithTag("IconItem");
-        //Destroy(itemController.choiceItemSlot);
-        //Destroy(inventoryBttn);
-        //inventory.SelectedItemID = 0;
-        //inventory.mailIsFull = false;
         inventory.Unequipt(true);
     }
 
@@ -1252,11 +1156,6 @@ public class GameManager : MonoBehaviour
     void SoundsPlay(AudioClip audioClip)
     {
         Sounds.PlayOneShot(audioClip);
-    }
-    void SaveProgres(string KeyName)
-    {
-       
-        PlayerPrefs.SetInt(KeyName, 1);
     }
     //----------------------------------------------------------------//
 }

@@ -1,26 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Controllers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuScr : MonoBehaviour
 {
+    public SaveController SaveController;
     public GameObject[] EngVer;
     public GameObject[] RusVer;
     public GameObject StartPanel;
     public GameObject Menu;
     private GameManager gameManager;
     public GameObject[] Languages;
+    public GameObject Privacy;
     private int saveLanguages;
     void Start()
     {
-        gameManager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameManager>();
-        if (PlayerPrefs.GetInt("Play") == 1)
+        if (PlayerPrefs.GetInt("Privacy") == 1)
         {
-            StartPanel.SetActive(true);
-            PlayerPrefs.SetInt("Play", 0);
-            Menu.SetActive(false);
+            Privacy.SetActive(true);
+            PlayerPrefs.SetInt("Privacy", 0);
         }
+        gameManager = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameManager>();
         if (PlayerPrefs.GetInt("Ver") == 0)
         {
             EnglisVersion();
@@ -64,21 +66,20 @@ public class MenuScr : MonoBehaviour
     public void Play()
     {
         PlayerPrefs.DeleteAll();
+        Menu.SetActive(false);
+        StartPanel.SetActive(true);
         if(saveLanguages == 1)
         {
             PlayerPrefs.SetInt("Ver", 1);
         }
-        PlayerPrefs.SetInt("Play", 1);
-        PlayerPrefs.SetInt("FIRSTTIMEOPENING", 0);
-        PlayerPrefs.SetInt("PlayStartMusic", 1);
-        gameManager.Data.NewGame();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SaveController.Clear();
+
+        
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void ResumeGame(GameObject ResumeGame)
     {
-        ResumeGame.SetActive(true);
         Menu.SetActive(false);
-        gameManager.MusicPlay(gameManager.MusicBG);
-        gameManager.Data.LoadData();
+        SaveController.Load();
     }
 }

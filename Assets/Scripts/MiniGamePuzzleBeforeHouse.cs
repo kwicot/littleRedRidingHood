@@ -60,7 +60,6 @@ public class MiniGamePuzzleBeforeHouse : MonoBehaviour
             if (gameManager.MiniGamePuzzleFinal == 3 && gameManager.MiniGamePuzzleFinal1 == 2 && (gameManager.MiniGamePuzzleFinal2 == 0 || gameManager.MiniGamePuzzleFinal2 == 1))
             {
                 isPlay = false;
-                PlayerPrefs.SetInt("MiniGamePuzzleBeforeHouse", 1);
                 StartCoroutine(TimeWin());
             }
         }

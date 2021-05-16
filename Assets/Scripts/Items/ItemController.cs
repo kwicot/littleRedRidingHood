@@ -14,6 +14,8 @@ public class ItemController : MonoBehaviour
     void Start()
     {
         inventory = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Inventory>();
+        transform.localScale = new Vector3(1,1,1);
+        if (transform.parent) transform.position = transform.parent.position;
     }
 
     private void Awake()
@@ -30,9 +32,6 @@ public class ItemController : MonoBehaviour
 
     public void SetSlot(Slot slot)
     {
-        button = GetComponent<Button>();
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => OnClick());
         slot.selectedItemController = this;
        
         var trans = slot.gameObject.transform;

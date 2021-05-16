@@ -78,7 +78,6 @@ public class Chest : MonoBehaviour
             if(Kod != null) Destroy(Kod);
             gameManager.Sounds.PlayOneShot(gameManager.SoundsGame[1]);
             number1 = 8;
-            PlayerPrefs.SetInt("Room", 1);
         }
     }
 }

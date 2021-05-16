@@ -78,7 +78,6 @@ public class Inventory : MonoBehaviour
 
 
         CraftMode = false;
-        manager.Data.SaveData();
     }
 
     public void AddItem(ItemController itemController, bool WithSave = true)
@@ -86,13 +85,17 @@ public class Inventory : MonoBehaviour
         //Проверка есть ли такой предмет
         foreach (var _item in ItemsList)
             if(_item.MainData.Name == itemController.MainData.Name)
-            { 
+            {
+                Debug.Log("Item not found in dateBase");
                 return;
             }
         
         if(HandSlot.selectedItemController != null)
-            if(HandSlot.selectedItemController.MainData.Name == itemController.MainData.Name)
+            if (HandSlot.selectedItemController.MainData.Name == itemController.MainData.Name)
+            {
+                Debug.Log("This item in hand");
                 return;
+            }
         
         
         //Проверка наличия места
@@ -113,7 +116,6 @@ public class Inventory : MonoBehaviour
 
 
         Debug.Log("Item added successful");
-        if(WithSave)manager.Data.SaveData();
     }
 
     public void RemoveItem(ItemController item)
@@ -121,7 +123,6 @@ public class Inventory : MonoBehaviour
         if (HandSlot.selectedItemController != null && HandSlot.selectedItemController.MainData.Name == item.MainData.Name) HandSlot.selectedItemController = null;
         Destroy(item.gameObject);
         RemoveNulls();
-        manager.Data.SaveData();
     }
     public void RemoveItem(string name)
     {
@@ -139,7 +140,6 @@ public class Inventory : MonoBehaviour
                 return;
             }
         }
-        manager.Data.SaveData();
     }
     public void RemoveItem(SOItem item)
     {
@@ -153,7 +153,6 @@ public class Inventory : MonoBehaviour
         }
 
         RemoveNulls();
-        manager.Data.SaveData();
     }
     
 
@@ -170,12 +169,11 @@ public class Inventory : MonoBehaviour
         //Проверка наличия предмета в руке
         if (HandSlot.selectedItemController != null)
         {
-            if (HandSlot.selectedItemController == itemController)
+            if (HandSlot.selectedItemController.MainData.Name == itemController.MainData.Name)
             {
                 Unequipt();
                 Debug.Log("This item was been om hand and removed");
                 ChangeIcon();
-                manager.Data.SaveData();
                 return;
             }
             else
@@ -188,10 +186,12 @@ public class Inventory : MonoBehaviour
         {
             foreach (var slot in SlotsUI)
             {
-                if (slot.selectedItemController == itemController)
-                    slot.selectedItemController = null;
+                if (slot.selectedItemController != null)
+                    if (slot.selectedItemController.MainData.Name == itemController.MainData.Name)
+                        slot.selectedItemController = null;
             }
-                if (ItemsList[i] == itemController)
+
+            if (ItemsList[i].MainData.Name == itemController.MainData.Name)
             {
                 //Установка предмета
                 ItemsList.RemoveAt(i);
@@ -199,7 +199,6 @@ public class Inventory : MonoBehaviour
                 HandSlot.selectedItemController = itemController;
                 Debug.Log("Equipt");
                 ChangeIcon();
-                manager.Data.SaveData();
                 return;
             }
         }
@@ -222,18 +221,18 @@ public class Inventory : MonoBehaviour
                     emptySlot = _slot;
                     break;
                 }
-            AddItem(HandSlot.selectedItemController);
-            HandSlot.selectedItemController.SetSlot(emptySlot);
+
+            ItemController item = HandSlot.selectedItemController;
             HandSlot.selectedItemController = null;
+            AddItem(item);
+            item.SetSlot(emptySlot);
         }
         else
         {
             RemoveItem(HandSlot.selectedItemController);
-            HandSlot.selectedItemController = null;
         }
         HandSlot.selectedItemController = null;
         ChangeIcon();
-        manager.Data.SaveData();
     }
     public void CreateItemById(int id, out ItemController controller)
     {
@@ -319,6 +318,11 @@ public class Inventory : MonoBehaviour
         }
 
         return false;
+    }
+
+    public List<ItemController> GetItems()
+    {
+        return ItemsList;
     }
 
     void ChangeIcon()
