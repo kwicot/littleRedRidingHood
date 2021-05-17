@@ -30,6 +30,7 @@ public class Puzzle : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             Vector3 newPos = MainCamera.ScreenToWorldPoint(eventData.position);
             newPos.z = 0;
+            offset.z = 0;
             transform.position = newPos + offset;
         }
     }
