@@ -333,6 +333,7 @@ public class Inventory : MonoBehaviour
         {
             img.gameObject.SetActive(true);
             img.sprite = HandSlot.selectedItemController.GetComponent<Image>().sprite;
+            img.preserveAspect = true;
         }
         else
             img.gameObject.SetActive(false);

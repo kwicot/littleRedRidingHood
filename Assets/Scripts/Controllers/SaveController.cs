@@ -120,7 +120,7 @@ namespace Controllers
                     Debug.LogError(e.Message);
                 }
             }
-            manager.Music.Play();
+            manager.MusicPlay(manager.MusicBG);
             LoadInventory();
         }
 

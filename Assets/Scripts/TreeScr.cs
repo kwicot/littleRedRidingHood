@@ -37,7 +37,8 @@ public class TreeScr : MonoBehaviour
             if (elapsedTime > mainTime)
             {
                 isRotate = false;
-                Destroy(Wolf);
+                //Destroy(Wolf);
+                Wolf.SetActive(false);
             }
 
 
