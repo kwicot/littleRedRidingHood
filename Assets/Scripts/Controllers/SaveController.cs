@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Models;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Controllers
 {
@@ -29,6 +30,7 @@ namespace Controllers
                 ObjectsSate.Add(obj.name,obj.activeSelf);
                 id++;
             }
+            SetupButtonsAction();
         }
 
         void ReloadStates()
@@ -44,6 +46,23 @@ namespace Controllers
                 catch (Exception e)
                 {
                     Debug.LogError(e.Message);
+                }
+            }
+        }
+
+        void SetupButtonsAction()
+        {
+            foreach (var obj in AllObjects)
+            {
+                if (obj.TryGetComponent(out Button btn))
+                {
+                    var find = false;
+                    var listeners = btn.onClick.GetPersistentEventCount();
+                    for (int i = 0; i < listeners; i++)
+                    {
+                        if (btn.onClick.GetPersistentMethodName(i) == "Save") find = true;
+                    }
+                    if(!find) btn.onClick.AddListener(()=>Save());
                 }
             }
         }
@@ -77,6 +96,7 @@ namespace Controllers
            ReloadStates();
            SaveInventory();
            PersistentCache.Save("Objects", ObjectsSate);
+           Debug.Log("Saved");
 
         }
 
@@ -169,6 +189,11 @@ namespace Controllers
         {
             Save();
             Debug.Log("Saved");
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            //Save();
         }
 
         public bool HasData()
