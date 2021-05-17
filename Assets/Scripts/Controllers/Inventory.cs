@@ -140,6 +140,7 @@ public class Inventory : MonoBehaviour
                 return;
             }
         }
+        ChangeIcon();
     }
     public void RemoveItem(SOItem item)
     {

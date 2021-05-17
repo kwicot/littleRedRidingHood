@@ -10,6 +10,9 @@ namespace Controllers
     {
         public GameObject objectsToSave;
         public Inventory Inventory;
+        private GameManager manager;
+        
+        
 
         private Dictionary<string, bool> ObjectsSate = new Dictionary<string, bool>();
         private HashSet<GameObject> AllObjects;
@@ -17,6 +20,7 @@ namespace Controllers
         private void Start()
         {
             SetupObjectsStates();
+            manager = FindObjectOfType<GameManager>();
         }
 
         private int id = 0;
@@ -116,6 +120,7 @@ namespace Controllers
                     Debug.LogError(e.Message);
                 }
             }
+            manager.Music.Play();
             LoadInventory();
         }
 
