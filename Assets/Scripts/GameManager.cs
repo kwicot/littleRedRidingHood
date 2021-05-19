@@ -1072,6 +1072,7 @@ public class GameManager : MonoBehaviour
             PotionObj.GetComponent<Image>().color = new Color(0, 1, 0.7507141f);
             ingredient += 1;
             Sounds.PlayOneShot(SoundsGame[12]);
+            PotionObj.layer = 2;
         }
     }
     public GameObject Plate;
@@ -1108,7 +1109,7 @@ public class GameManager : MonoBehaviour
 
     public void ClickGrandMother()
     {
-        if(inventory.CheckHandItemName("ClickGrandMother")) /////////////////////////////////////// 
+        if(inventory.CheckHandItemName("Potion")) /////////////////////////////////////// 
         {
             ClearInventory();
             //Destroy(GrandMother[0]);
